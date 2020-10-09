@@ -7,7 +7,7 @@ This has an extremely elaborate tweet filter, just a little note.
 
 https://github.com/zyme-xd // Main developer
 
-https://github.com/zjjpp // Did majority of the filtering stuff
+https://github.com/nullobsi // Did majority of the filtering stuff
 
 # required node modules
 
