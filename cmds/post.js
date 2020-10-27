@@ -1,9 +1,7 @@
 const tweettest = require("./tweettest");
 const Twit = require("twit");
 const fs = require("fs");
-const {
-    stringify
-} = require("querystring");
+const { stringify } = require("querystring");
 const URLRegex = require('./badword/TLDBlock');
 const spellchecker = require("spellchecker");
 const T = new Twit({
