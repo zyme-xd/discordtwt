@@ -24,7 +24,11 @@
     "twitter-bot",
     "discord"
   ],
-  "author": "zyme & nullobsi",
+  "private": true,
+  "contributors": [
+    "zyme-xd",
+    "nullobsi"
+  ],
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/zyme-xd/discordtwt/issues"
