@@ -1,36 +1,27 @@
-const Discord = require('discord.js')
-const client = new Discord.Client();
-require('dotenv').config();
-const Twit = require("twit")
-const fs = require('fs')
-const http = require('http')
-const config = require("./config");
-const path = require("path");
-global.config = config;
-client.commands = new Discord.Collection
-
-global.bannedUsers = []
-
-
-
-const T = new Twit({
-    consumer_key: process.env.CONSUMER_KEY,
-    consumer_secret: process.env.CONSUMER_SECRET,
-    access_token: process.env.ACCESS_TOKEN,
-    access_token_secret: process.env.ACCESS_SECRET,
-})
-
-if (fs.existsSync(__dirname + "/bannedusers.txt")) {
-    global.bannedUsers = fs.readFileSync(__dirname + "/bannedusers.txt").toString().split("\n");
-} else {
-    global.bannedUsers = [];
-    fs.writeFileSync(__dirname + "/bannedusers.txt", "");
+global.twtBot = {
+    config: require("./config.js"),
+    commands: new Discord.Collection,
+    bannedUsers: require("./bannedUsers.json"),
+    nodeModules: {
+        Twit: require("twit"),
+        fs: require("fs"),
+        http: require("http"),
+        path: require("path"),
+        Discord: require("discord.js")
+    },
+    client: null
 }
+twtBot.client = new twtBot.nodeModules.Discord.Client()
+twtBot.twitter = new twtBot.Twit(config.token.twitter)
 
 
 console.log(T, `twitter info has been loaded`)
 
-console.log(config.prefix, 'prefix loaded')
+console.log(twtBot.config.prefix, 'prefix loaded')
+
+twtBot.T.on('connected', (res)=>{
+    console.debug(`[twitter] => Connected`)
+})
 
 const commandFiles = fs.readdirSync('./cmds').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -38,21 +29,18 @@ for (const file of commandFiles) {
 
     // set a new item in the Collection
     // with the key as the command name and the value as the exported module
-    client.commands.set(command.name, command);
+    twtBot.client.commands.set(command.name, command);
 }
-console.log(commandFiles)
-
-const token = process.env.DISCORD_TOKEN;
-// getting token from env file, this is so this project can be open-source in the future and my api keys and tokens aren't
-// going to be shown in the github respiratory, thank you gitignore!
+console.log(`[core] => commandFiles `,commandFiles)
 
 
 client.on('ready', () => {
-    console.log('logged in as ' + client.user.tag + ', bot ready'); // now it sends the bots tag,
+    console.debug(`[discord] => Ready`)
+    console.debug(`Logged in as "${twtBot.client.user.username}#${twtBot.client.user.discriminator}"`)
     client.user.setPresence({
         status: 'online',
         activity: {
-            name: 'tweets in ' + client.guilds.cache.size + ' servers!',
+            name: `tweets in ${twtBot.client.guilds.cache.size} servers! use "${twtBot.config.prefix}help" to get started`,
             type: 'WATCHING',
             url: 'https://twitter.com/TwtDiscord'
         }
@@ -60,23 +48,20 @@ client.on('ready', () => {
 });
 
 
-client.on('message', message => {
-    if (bannedUsers.includes(message.author.id))
-        return;
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-    const args = message.content.slice(prefix.length).trim().split(' ');
-    const command = args.shift().toLowerCase();
-
-
-
-    if (!client.commands.has(command)) return;
+twtBot.client.on('message', (message) => {
+    var args = message.content.slice(prefix.length).trim().split(' ');
+    var command = args.shift().toLowerCase();
+    if (!twtBot.client.commands.has(command)) return;
 
     try {
-        client.commands.get(command).execute(message, args);
+        if (twtBot.bannedUsers.includes(message.author.id)) return;
+        if (!message.conten.startsWith(twtBot.prefix)) return;
+        if (message.author.bot) return;
+        twtBot.client.commands.get(command).execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply('there was an error trying to execute that command!');
+        message.reply("darn, an error has occurred.")
     }
 });
 
-client.login(token)
+twtBot.client.login(twtBot.config.token.discord)
