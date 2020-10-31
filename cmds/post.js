@@ -1,16 +1,7 @@
 const tweettest = require("./tweettest");
-const Twit = require("twit");
-const fs = require("fs");
 const { stringify } = require("querystring");
 const URLRegex = require('./badword/TLDBlock');
 const spellchecker = require("spellchecker");
-const T = new Twit({
-    consumer_key: process.env.CONSUMER_KEY,
-    consumer_secret: process.env.CONSUMER_SECRET,
-    access_token: process.env.ACCESS_TOKEN,
-    access_token_secret: process.env.ACCESS_SECRET,
-});
-const Discord = require("discord.js");
 
 // Replacements, thank you nullobsi holy shit this looks like a nightmare
 const ranges = [
@@ -188,19 +179,19 @@ let allowed_letters = Array.from((new Set(temp_allowed)));
 
 
 
-let bad_words = fs.readFileSync(__dirname + '/badword/badwords.txt').toString().split(', ')
+let bad_words = require("./badword/badwords.json")
 bad_words.forEach(word => spellchecker.add(word));
 
 /**
- * @type {Discord.Collection<string,[number,boolean]>}
+ * @type {twtBot.nodeModules.Discord.Collection<string,[number,boolean]>}
  */
-let cooldowns = new Discord.Collection()
+let cooldowns = new twtBot.nodeModules.Discord.Collection()
 
 module.exports = {
     name: 'post',
     description: 'post content to twitter',
     /**
-     * @param message {Discord.Message}
+     * @param message {twtBot.nodeModules.Discord.Message}
      * @param args {string[]}
      */
     async execute(message, args) {
@@ -210,7 +201,7 @@ module.exports = {
             if (!expires[1] && now <= expires[0]) {
                 expires[1] = true;
                 message.react('⏰');
-                message.author.send("Please wait before sending another tweet! " + ((expires[0] - now) / 1000) + "s left");
+                message.reply("Please wait before sending another tweet! " + ((expires[0] - now) / 1000) + "s left");
                 cooldowns.set(message.author.id, expires);
                 return;
             } else if (now <= expires[0]) return;
@@ -275,14 +266,14 @@ module.exports = {
             denyTweet("Tweet has passed the character limit")
         }
 
-        T.post('statuses/update', {
+        twtBot.twitter.post('statuses/update', {
             status: ActualTweet + '\n - ' + message.author.tag
         }, function (err, data, response) {
             console.log(data)
             let cooldown = Date.now() + 10000;
             cooldowns.set(message.author.id, [cooldown, false]);
             message.react('✅')
-            message.author.send('Tweet has been sent! \n' + `https://twitter.com/${data.user.name}/status/${data.id_str}`)
+            message.reply('Tweet has been sent! \n' + `https://twitter.com/${data.user.name}/status/${data.id_str}`)
         })
 
         /**
@@ -304,11 +295,11 @@ module.exports = {
             let cooldown = Date.now() + 5000;
             cooldowns.set(message.author.id, [cooldown, false]);
             message.react('⛔');
-            return message.author.send(txt);
+            return message.reply(txt);
         }
 
         async function logUser() {
-            const embed = new Discord.MessageEmbed()
+            const embed = new twtBot.nodeModules.Discord.MessageEmbed()
                 .setColor("#FF0000")
                 .setTitle("Blacklisted Word")
                 .setAuthor("**LOSER:** " + message.author.tag, message.author.avatarURL(), message.url)
@@ -316,9 +307,9 @@ module.exports = {
                 .setFooter("ID: " + message.author.id)
                 .setTimestamp();
             /**
-             * @type {Discord.TextChannel}
+             * @type {twtBot.nodeModules.Discord.TextChannel}
              */
-            let channel = await message.client.channels.fetch(config.logChannel)
+            let channel = await message.client.channels.fetch(twtBot.config.logChannel)
             channel.send(embed);
         }
     }

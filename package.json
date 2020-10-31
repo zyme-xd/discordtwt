@@ -1,6 +1,6 @@
 {
   "name": "twtdiscord",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "twitter for discord sorta",
   "main": "twit.js",
   "dependencies": {
@@ -11,7 +11,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ."
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,12 @@
     "twitter-bot",
     "discord"
   ],
-  "author": "zyme & nullobsi",
+  "private": true,
+  "contributors": [
+    "zyme-xd",
+    "nullobsi",
+    "jylescoad-ward"
+  ],
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/zyme-xd/discordtwt/issues"
