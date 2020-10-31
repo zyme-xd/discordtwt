@@ -201,7 +201,7 @@ module.exports = {
             if (!expires[1] && now <= expires[0]) {
                 expires[1] = true;
                 message.react('⏰');
-                message.author.send("Please wait before sending another tweet! " + ((expires[0] - now) / 1000) + "s left");
+                message.reply("Please wait before sending another tweet! " + ((expires[0] - now) / 1000) + "s left");
                 cooldowns.set(message.author.id, expires);
                 return;
             } else if (now <= expires[0]) return;
@@ -266,14 +266,14 @@ module.exports = {
             denyTweet("Tweet has passed the character limit")
         }
 
-        twtBot.T.post('statuses/update', {
+        twtBot.twitter.post('statuses/update', {
             status: ActualTweet + '\n - ' + message.author.tag
         }, function (err, data, response) {
             console.log(data)
             let cooldown = Date.now() + 10000;
             cooldowns.set(message.author.id, [cooldown, false]);
             message.react('✅')
-            message.author.send('Tweet has been sent! \n' + `https://twitter.com/${data.user.name}/status/${data.id_str}`)
+            message.reply('Tweet has been sent! \n' + `https://twitter.com/${data.user.name}/status/${data.id_str}`)
         })
 
         /**
@@ -295,7 +295,7 @@ module.exports = {
             let cooldown = Date.now() + 5000;
             cooldowns.set(message.author.id, [cooldown, false]);
             message.react('⛔');
-            return message.author.send(txt);
+            return message.reply(txt);
         }
 
         async function logUser() {
