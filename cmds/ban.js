@@ -2,7 +2,7 @@ const {
     S_IRGRP
 } = require('constants');
 const fs = require("fs");
-const embed = new Discord.MessageEmbed()
+const embed = new twtBot.nodeModules.Discord.MessageEmbed()
     .setTitle('Blacklisted')
     .setColor(0xCC4040)
     .setDescription("You've been blacklisted from the TWTDiscord bot.")
