@@ -15,13 +15,8 @@ twtBot.twitter = new twtBot.nodeModules.Twit(twtBot.config.token.twitter)
 twtBot.client.commands = new twtBot.nodeModules.Discord.Collection;
 
 
-console.log(twtBot.twitter, `twitter info has been loaded`)
-
-console.log(twtBot.config.prefix, 'prefix loaded')
-
-//twtBot.twitter.stream('user').on('connected', (res)=>{
-//    console.debug(`[twitter] => Connected`)
-//})
+console.debug(`[core] => prefix loaded as "${twtBot.config.prefix}"`)
+console.debug(`[twitter] => config;`, twtBot.twitter)
 
 const commandFiles = twtBot.nodeModules.fs.readdirSync('./cmds').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
