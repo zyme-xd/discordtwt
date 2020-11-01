@@ -6,7 +6,7 @@ module.exports = {
     name: 'help',
     description: 'tweet things',
     execute(message, args) {
-        message.author.send('**Commands:**\n-help\n-post') // edit this code to tweet later
+        message.channel.send(`\`=== commands ===\`\r\n${twtBot.config.prefix}post [content]\r\n`)
 
     },
 
