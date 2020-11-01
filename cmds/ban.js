@@ -7,6 +7,7 @@ const embed = new twtBot.nodeModules.Discord.MessageEmbed()
 module.exports = {
     name: 'ban',
     description: 'ban people', // i spent 2 hours writing this what the fuck
+    userCommand: true,
     execute(message, args) {
         if (config.admins.includes(message.author.id)) {
             let userId = message.mentions.users.first().id || args[0]

@@ -1,12 +1,11 @@
-const {
-    timeStamp
-} = require("console");
+const { timeStamp } = require("console");
 
 module.exports = {
-    name: 'help',
+    name: 'tweetTest',
     description: 'tweet things',
+    userCommand: false,
     execute(message, args) {
-        message.channel.send(`\`=== commands ===\`\r\n${twtBot.config.prefix}post [content]\r\n`)
+        return;
 
     },
 

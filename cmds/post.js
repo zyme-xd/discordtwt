@@ -190,6 +190,7 @@ let cooldowns = new twtBot.nodeModules.Discord.Collection()
 module.exports = {
     name: 'post',
     description: 'post content to twitter',
+    userCommand: true,
     /**
      * @param message {twtBot.nodeModules.Discord.Message}
      * @param args {string[]}

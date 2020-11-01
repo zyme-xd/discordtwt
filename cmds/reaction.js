@@ -4,7 +4,8 @@ const {
 
 module.exports = {
     name: 'react',
-    description: 'tweet things',
+    description: 'it reacts to stuff',
+    userCommand: false,
     execute(message, args) {
         message.react('🇹')
         message.react('🇼')
