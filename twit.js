@@ -26,12 +26,31 @@ for (const file of commandFiles) {
     // with the key as the command name and the value as the exported module
     twtBot.client.commands.set(command.name, command);
 }
-console.log(`[core] => commandFiles `,commandFiles)
+console.log(`[core] => commandFiles `,commandFiles);
 
 
 twtBot.client.on('ready', () => {
+    // Preperation for Logging
+    if (twtBot.config.fileLogging) {
+        twtBot.logLocation = `logs/${twtBot.client.readyTimestamp}.csv`;
+        if (!twtBot.nodeModules.fs.existsSync("logs")){ 
+            twtBot.nodeModules.fs.mkdirSync("logs"); 
+        }
+        if (!twtBot.nodeModules.fs.exists(twtBot.logLocation,function(){return;})) {
+            var logFormat = `Message Timestamp,GuildID,MessageID,ChannelID,AuthorID, Author Username#Discriminator,Message Content\r\n`
+            twtBot.nodeModules.fs.writeFile(twtBot.logLocation, logFormat, function (err) {
+                if (err) throw err;
+                console.log(`[logging] => created file '${twtBot.logLocation}'`);
+                return;
+              });
+        }
+    }
+
+    // Console Logging (duh)
     console.debug(`[discord] => Ready`)
-    console.debug(`Logged in as "${twtBot.client.user.username}#${twtBot.client.user.discriminator}"`)
+    console.debug(`[discord] identity => "${twtBot.client.user.username}#${twtBot.client.user.discriminator}"`)
+
+    // Set the status for people to know wtf to do.
     twtBot.client.user.setPresence({
         status: 'online',
         activity: {
@@ -42,16 +61,33 @@ twtBot.client.on('ready', () => {
     })
 });
 
+// Command Logging
+twtBot.client.on('message',(msg)=>{
+    if (!twtBot.config.fileLogging) return;
+    if (!twtBot.client.commands.has(msg.content.slice(twtBot.config.prefix.length).trim().split(' ').shift().toLowerCase())) return;
 
-twtBot.client.on('message', (message) => {
-    var args = message.content.slice(twtBot.config.prefix.length).trim().split(' ');
-    var command = args.shift().toLowerCase();
-    if (!twtBot.client.commands.has(command)) return;
+    var dataToWrite = 
+// here is da format
+// Message Timestamp  |  Author GuildID  |     Message ID     |  Author Channel ID  |    Author ID   |          Author Username+Discriminator           |    Message Content   |  
+`${msg.createdTimestamp},${msg.guild.id   },${msg.id            },${msg.channel.id    },${msg.author.id},${msg.author.username}#${msg.author.discriminator},${msg.content.replace(",","")}`;
 
     try {
+        twtBot.nodeModules.fs.appendFileSync(twtBot.logLocation,`${dataToWrite}\r\n`); 
+        console.debug(`[logging] appended => ${msg.id}`)
+    } catch (e) {
+        console.error(e)
+    }
+    return;
+})
+
+
+twtBot.client.on('message', (message) => {
+    try {
         if (twtBot.bannedUsers.includes(message.author.id)) return;
-        if (!message.content.startsWith(twtBot.config.prefix)) return;
+        var args = message.content.slice(twtBot.config.prefix.length).trim().split(' ');
+        var command = args.shift().toLowerCase();
         if (message.author.bot) return;
+        if (!twtBot.client.commands.has(command)) return;
         twtBot.client.commands.get(command).execute(message, args);
     } catch (error) {
         console.error(error);
