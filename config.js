@@ -4,6 +4,7 @@ module.exports = {
     "errCooldown":5000,
     "logChannel":"channelid",
     "admins": ["admin1","admin2"],
+    "fileLogging": true,
     "token": {
         "twitter": {
             "consumer_key": process.env.CONSUMER_KEY || "",
