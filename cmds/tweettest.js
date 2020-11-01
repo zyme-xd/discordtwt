@@ -1,12 +1,11 @@
-const {
-    timeStamp
-} = require("console");
+const { timeStamp } = require("console");
 
 module.exports = {
-    name: 'help',
+    name: 'tweetTest',
     description: 'tweet things',
+    userCommand: false,
     execute(message, args) {
-        message.author.send('**Commands:**\n-help\n-post') // edit this code to tweet later
+        return;
 
     },
 

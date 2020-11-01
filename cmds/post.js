@@ -190,6 +190,7 @@ let cooldowns = new twtBot.nodeModules.Discord.Collection()
 module.exports = {
     name: 'post',
     description: 'post content to twitter',
+    userCommand: true,
     /**
      * @param message {twtBot.nodeModules.Discord.Message}
      * @param args {string[]}
@@ -209,6 +210,7 @@ module.exports = {
 
         if (message.attachments.size > 0) {
             denyTweet("Attachments are not allowed.")
+            return;
         }
 
         let ActualTweet = "";
@@ -222,10 +224,12 @@ module.exports = {
         for (i = 0; i < ActualTweet.length; i++) { // unicode character check
             if (!allowed_letters.includes(ActualTweet[i])) {
                 denyTweet("Tweet contains non standard characters.");
+                return;
             }
         }
         if (ActualTweet.trim().length == 0) {
             denyTweet("Tweet has no text.");
+            return;
         }
         /** @type {string} */
         let TweetNoSpace = args.join('').toLowerCase()

@@ -1,6 +1,6 @@
 {
   "name": "twtdiscord",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "twitter for discord sorta",
   "main": "twit.js",
   "dependencies": {
