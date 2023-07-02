@@ -1,5 +1,5 @@
 # twtdiscord
-
+### THIS HASN'T BEEN UPDATED IN AGES!!! VERY MUCH SO BROKEN (PROBABLY).
 This is the source code for the TWTDiscord bot!
 
 This has an extremely elaborate tweet filter, just a little note.
